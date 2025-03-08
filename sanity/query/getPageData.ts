@@ -10,7 +10,7 @@ export async function getPageData(slug: string) {
         slug,
         type,
         description,
-        "imageUrl": image.asset->url,
+        "image": imageUrl->image.asset->url,
         keywords,
         publishedAt
       }

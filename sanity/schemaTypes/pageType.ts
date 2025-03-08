@@ -20,25 +20,25 @@ export const pageType = defineType({
       options: {
         source: "title",
         maxLength: 96,
-        isUnique: async (slug, context) => {
+        isUnique: (slug, context) => {
           const { document } = context;
-
-          if (!slug) return false;
-          
-          const existingSlug = await client.fetch(
-            `*[_type == $type && slug.current == $slug && _id != $id][0]`,
-            {
-              type: document?._type,
-              slug,
-              id: document?._id,
-            }
-          );
-
-          return !existingSlug;
+          if (!slug) return false; // Ensure slug is provided
+    
+          return client
+            .fetch(
+              `count(*[_type == $type && slug.current == $slug && _id != $id]) == 0`,
+              {
+                type: document?._type,
+                slug,
+                id: document?._id || "",
+              }
+            )
+            .then((isUnique) => isUnique)
+            .catch(() => false);
         },
       },
       validation: (Rule) => Rule.required(),
-    }),
+    }),       
     defineField({
       name: "type",
       type: "string",
@@ -58,9 +58,13 @@ export const pageType = defineType({
     }),
     defineField({
       name: "imageUrl",
-      type: "url",
+      type: "reference",
       title: "Image URL",
-      description: "Provide an external image URL instead of uploading.",
+      description: "Choose an image from the Media Library.",
+      to: [{ type: "media" }],
+      options: {
+        filter: 'type == "image"',
+      },
     }),
     defineField({
       name: "keywords",

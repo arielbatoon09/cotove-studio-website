@@ -22,8 +22,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
   const defaultPage = process.env.DEFAULT_HOME_SLUG as string;
   const { slug } = await params;
   const page = await getPageData(!slug ? defaultPage : slug[0]);
-
-  console.log("Data: ", page);
+  console.log(page);
 
   if (!page) {
     return notFound();

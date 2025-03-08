@@ -8,7 +8,7 @@ export const basicType = defineType({
     defineField({
       name: "website",
       type: "string",
-      title: "Website Name",
+      title: "Website Name",  
       validation: (Rule) => Rule.required(),
     }),
     defineField({
