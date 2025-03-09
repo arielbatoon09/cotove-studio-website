@@ -1,15 +1,15 @@
-// import type { Metadata } from 'next';
-// import { createMetadata } from "@/lib/metadata";
+import type { Metadata } from 'next';
+import { createMetadata } from "@/lib/metadata";
 import { getPageData } from "@/sanity/query/getPageData";
 import { TPageProps } from "@/types";
 import { notFound } from "next/navigation";
 
-// export async function generateMetadata({ params }: { params: { slug?: string[] } }): Promise<Metadata> {
-//   const defaultPage = process.env.DEFAULT_HOME_SLUG as string;
-//   const { slug } = await params;
-//   const resolved = !slug ? defaultPage : slug[0];
-//   return await createMetadata(resolved);
-// }
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const defaultPage = process.env.DEFAULT_HOME_SLUG as string;
+  const { slug } = await params;
+  const resolved = !slug ? defaultPage : slug[0];
+  return await createMetadata(resolved);
+}
 
 // Dynamic Page Handler
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
