@@ -5,12 +5,15 @@ import { TPageProps } from "@/types";
 import { notFound } from "next/navigation";
 
 type TParams = {
-  params: Promise<{ slug: string }>
-}
+  params: { slug?: string[] }
+};
+
 
 export async function generateMetadata({ params }: TParams): Promise<Metadata> {
+  const defaultPage = process.env.DEFAULT_HOME_SLUG as string;
   const { slug } = await params;
-  return await createMetadata(slug);
+  const resolved = !slug ? defaultPage : slug[0];
+  return await createMetadata(resolved);
 }
 
 // Dynamic Page Handler

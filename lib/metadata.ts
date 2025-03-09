@@ -2,8 +2,7 @@ import { Metadata } from "next";
 import { metadataQuery } from "@/sanity/query/metadataQuery";
 
 export async function createMetadata(slug: string): Promise<Metadata> {
-  const defaultPage = process.env.DEFAULT_HOME_SLUG as string;
-  const { page, basic } = await metadataQuery(!slug ? defaultPage : slug[0]);
+  const { page, basic } = await metadataQuery(slug);
   const domainWithProtocol = basic.domain.startsWith("http") ? basic.domain : `https://${basic.domain}`;
 
   return {
