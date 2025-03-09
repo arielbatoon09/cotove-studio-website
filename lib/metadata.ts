@@ -1,57 +1,40 @@
 import { Metadata } from "next";
+import { metadataQuery } from "@/sanity/query/metadataQuery";
 
-interface MetadataProps {
-  title: string;
-  description: string;
-  keywords: string[];
-  image: string;
-  type: "Website" | "Article";
-  noIndex: boolean;
-  favicon: string;
-}
-
-interface BasicProps {
-  website: string;
-  domain: string;
-  email: string;
-  phone: string;
-  address: string;
-}
-
-export function generateMetadata(metadata: MetadataProps, basic: BasicProps): Metadata {
-  const domainWithProtocol = basic.domain.startsWith("http")
-    ? basic.domain
-    : `https://${basic.domain}`;
+export async function createMetadata(slug: string): Promise<Metadata> {
+  const defaultPage = process.env.DEFAULT_HOME_SLUG as string;
+  const { page, basic } = await metadataQuery(!slug ? defaultPage : slug[0]);
+  const domainWithProtocol = basic.domain.startsWith("http") ? basic.domain : `https://${basic.domain}`;
 
   return {
     metadataBase: new URL(domainWithProtocol),
-    title: `${basic.website} - ${metadata.title}`,
-    description: metadata.description,
-    keywords: metadata.keywords,
+    title: `${basic.website} - ${page.title}`,
+    description: page.description,
+    keywords: page.keywords,
     creator: basic.website,
     publisher: basic.website,
     openGraph: {
-      type: metadata.type === "Website" ? "website" : "article" as const,
+      type: page.type === "Website" ? "website" : "article",
       locale: "en_US",
-      url: `${domainWithProtocol}/${metadata.title}`,
+      url: `${domainWithProtocol}/${page.slug.current}`,
       siteName: basic.website,
-      title: `${basic.website} - ${metadata.title}`,
-      description: metadata.description,
+      title: `${basic.website} - ${page.title}`,
+      description: page.description,
       images: [
         {
-          url: metadata.image,
+          url: page.image,
           width: 1200,
           height: 675,
-          alt: `${basic.website} - ${metadata.title}`,
+          alt: `${basic.website} - ${page.title}`,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${basic.website} - ${metadata.title}`,
-      description: metadata.description,
-      images: metadata.image,
+      title: `${basic.website} - ${page.title}`,
+      description: page.description,
+      images: page.image,
     },
-    robots: metadata.noIndex ? "noindex, nofollow" : "index, follow",
+    robots: page.noIndex ? "noindex, nofollow" : "index, follow",
   };
 }
