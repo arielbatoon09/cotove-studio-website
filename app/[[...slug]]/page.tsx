@@ -4,7 +4,7 @@ import { getPageData } from "@/sanity/query/getPageData";
 import { TPageProps } from "@/types";
 import { notFound } from "next/navigation";
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { slug?: string[] } }): Promise<Metadata> {
   const defaultPage = process.env.DEFAULT_HOME_SLUG as string;
   const { slug } = await params;
   const resolved = !slug ? defaultPage : slug[0];
@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 // Dynamic Page Handler
-export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+export default async function Page({ params }: { params: { slug?: string[] } }) {
   const defaultPage = process.env.DEFAULT_HOME_SLUG as string;
   const { slug } = await params;
   const resolved = !slug ? defaultPage : slug[0];
@@ -24,7 +24,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
   return renderPage(page);
 }
-
 
 // Render Pages
 function renderPage(page: TPageProps) {
