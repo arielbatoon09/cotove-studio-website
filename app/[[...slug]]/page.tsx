@@ -4,15 +4,9 @@ import { getPageData } from "@/sanity/query/getPageData";
 import { TPageProps } from "@/types";
 import { notFound } from "next/navigation";
 
-type TParams = {
-  params: { slug?: string[] }
-};
-
-
-export async function generateMetadata({ params }: TParams): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { slug?: string[] } }): Promise<Metadata> {
   const defaultPage = process.env.DEFAULT_HOME_SLUG as string;
-  const { slug } = await params;
-  const resolved = !slug ? defaultPage : slug[0];
+  const resolved = params.slug?.[0] ?? defaultPage;
   return await createMetadata(resolved);
 }
 
